@@ -15,14 +15,32 @@ export default function TaskBord() {
   };
   const [tasks, setTasks] = useState([defaultTask]);
   const [showAddModal, setShowAddModal] = useState(false);
-  function handleAddTask(newTask) {
-    console.log("adding a task...", newTask);
+  const [taskToUpdate, setTaskToUpdate] = useState(null);
+  function handleAddTask(newTask, isAdd) {
+    if (isAdd) {
+      setTasks([...tasks, newTask]);
+    } else {
+      setTasks(
+        tasks.map((task) => {
+          if (task.id === newTask.id) {
+            return newTask;
+          }
+          return task;
+        })
+      );
+    }
     setTasks([...tasks, newTask]);
     setShowAddModal(false);
   }
+  function handleEditTask(task) {
+    setShowAddModal(task);
+    setShowAddModal(true);
+  }
   return (
     <section className="mb-20" id="tasks">
-      {showAddModal && <AddTaskMordal onSave={handleAddTask} />}
+      {showAddModal && (
+        <AddTaskMordal onSave={handleAddTask} taskToUpdate={taskToUpdate} />
+      )}
       <div className="container mx-auto">
         {/* <!-- Search Box --> */}
         <div className="p-2 flex justify-end">
@@ -31,7 +49,7 @@ export default function TaskBord() {
         {/* <!-- Search Box Ends --> */}
         <div className="rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16">
           <TaskAction onAddClick={() => setShowAddModal(true)}></TaskAction>
-          <TaskList tasks={tasks}></TaskList>
+          <TaskList tasks={tasks} onEdit={handleEditTask}></TaskList>
           {/* <AddTaskMordal></AddTaskMordal> */}
         </div>
       </div>
